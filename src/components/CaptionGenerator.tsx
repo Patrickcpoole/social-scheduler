@@ -87,7 +87,7 @@ const CaptionGenerator = ({ onSelectCaption }: CaptionGeneratorProps) => {
             value={topic}
             onChange={(e) => setTopic(e.target.value)}
             placeholder="e.g., sustainability, fashion, tech trends"
-            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            className="mt-1 block w-full border border-gray-300 text-gray-700 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
             required
           />
         </div>
@@ -103,7 +103,7 @@ const CaptionGenerator = ({ onSelectCaption }: CaptionGeneratorProps) => {
             id="tone"
             value={tone}
             onChange={(e) => setTone(e.target.value)}
-            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            className="mt-1 block w-full border border-gray-300 text-gray-700 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
           >
             <option value="professional">Professional</option>
             <option value="friendly">Friendly</option>
@@ -124,7 +124,7 @@ const CaptionGenerator = ({ onSelectCaption }: CaptionGeneratorProps) => {
             id="length"
             value={length}
             onChange={(e) => setLength(e.target.value)}
-            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            className="mt-1 block w-full border border-gray-300 text-gray-700  rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
           >
             <option value="short">Short</option>
             <option value="medium">Medium</option>
@@ -139,7 +139,7 @@ const CaptionGenerator = ({ onSelectCaption }: CaptionGeneratorProps) => {
             className={`w-full inline-flex justify-center items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-base font-medium text-white ${
               isLoading || !topic
                 ? "bg-indigo-300 cursor-not-allowed"
-                : "bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                : "bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 cursor-pointer focus:ring-offset-2 focus:ring-indigo-500"
             }`}
           >
             {isLoading ? (
@@ -166,6 +166,8 @@ const CaptionGenerator = ({ onSelectCaption }: CaptionGeneratorProps) => {
                 </svg>
                 Generating...
               </>
+            ) : captions.length > 0 ? (
+              "Generate New Captions"
             ) : (
               "Generate Captions"
             )}
@@ -176,7 +178,7 @@ const CaptionGenerator = ({ onSelectCaption }: CaptionGeneratorProps) => {
       {captions.length > 0 && (
         <div className="p-6 bg-gray-50 border-t">
           <h3 className="text-lg font-medium text-gray-900 mb-4">
-            Generated Captions:
+            Suggested Captions:
           </h3>
           <div className="space-y-4">
             {captions.map((caption, index) => (
@@ -188,7 +190,7 @@ const CaptionGenerator = ({ onSelectCaption }: CaptionGeneratorProps) => {
                 <div className="mt-3 flex justify-end">
                   <button
                     onClick={() => onSelectCaption(caption)}
-                    className="text-sm text-indigo-600 hover:text-indigo-900 font-medium"
+                    className="text-sm text-indigo-600 hover:text-indigo-900 font-medium cursor-pointer"
                   >
                     Use this caption
                   </button>

@@ -68,12 +68,9 @@ const ImageGenerator = ({ onSelectImage }: ImageGeneratorProps) => {
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="p-6 space-y-4">
+      <form onSubmit={handleSubmit} className="p-6 space-y-4 text-gray-700">
         <div>
-          <label
-            htmlFor="prompt"
-            className="block text-sm font-medium text-gray-700"
-          >
+          <label htmlFor="prompt" className="block text-sm font-medium ">
             Image Description
           </label>
           <textarea
@@ -89,10 +86,7 @@ const ImageGenerator = ({ onSelectImage }: ImageGeneratorProps) => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label
-              htmlFor="style"
-              className="block text-sm font-medium text-gray-700"
-            >
+            <label htmlFor="style" className="block text-sm font-medium ">
               Style
             </label>
             <select
@@ -137,7 +131,7 @@ const ImageGenerator = ({ onSelectImage }: ImageGeneratorProps) => {
             className={`w-full inline-flex justify-center items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-base font-medium text-white ${
               isLoading || !prompt
                 ? "bg-indigo-300 cursor-not-allowed"
-                : "bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                : "bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 cursor-pointer focus:ring-offset-2 focus:ring-indigo-500"
             }`}
           >
             {isLoading ? (
@@ -164,6 +158,8 @@ const ImageGenerator = ({ onSelectImage }: ImageGeneratorProps) => {
                 </svg>
                 Generating...
               </>
+            ) : generatedImages.length > 0 ? (
+              "Generate New Images"
             ) : (
               "Generate Images"
             )}
@@ -193,7 +189,7 @@ const ImageGenerator = ({ onSelectImage }: ImageGeneratorProps) => {
                 <div className="mt-3 flex justify-end">
                   <button
                     onClick={() => onSelectImage(imageUrl)}
-                    className="text-sm text-indigo-600 hover:text-indigo-900 font-medium"
+                    className="text-sm text-indigo-600 hover:text-indigo-900 font-medium cursor-pointer"
                   >
                     Use this image
                   </button>
