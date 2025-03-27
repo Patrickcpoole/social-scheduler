@@ -2,17 +2,8 @@
 
 import { useState } from "react";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
-
-// Types for our posts
-type PostType = {
-  id: string;
-  date: Date;
-  title: string;
-  content: string;
-  imageUrl?: string;
-  videoUrl?: string;
-  frequency?: "once" | "daily" | "weekly" | "biweekly" | "monthly";
-};
+import { useGetMonthDetails } from "../hooks/useGetMonthDetails";
+import PostStatusTabs from "./PostStatusTabs";
 
 type CalendarViewProps = {
   posts: PostType[];
@@ -26,24 +17,8 @@ const CalendarView = ({
   onEditPost,
 }: CalendarViewProps) => {
   const [currentMonth, setCurrentMonth] = useState(new Date());
-
-  // Get current month details
-  const getMonthDetails = () => {
-    const year = currentMonth.getFullYear();
-    const month = currentMonth.getMonth();
-
-    // First day of the month
-    const firstDay = new Date(year, month, 1);
-    // Last day of the month
-    const lastDay = new Date(year, month + 1, 0);
-
-    // Day of the week for the first day (0 = Sunday, 6 = Saturday)
-    const startingDayOfWeek = firstDay.getDay();
-    // Total days in the month
-    const totalDays = lastDay.getDate();
-
-    return { year, month, firstDay, lastDay, startingDayOfWeek, totalDays };
-  };
+  const [selectedTab, setSelectedTab] = useState("all");
+  const { startingDayOfWeek, totalDays } = useGetMonthDetails(currentMonth);
 
   const navigateMonth = (direction: "prev" | "next") => {
     const newMonth = new Date(currentMonth);
@@ -72,22 +47,22 @@ const CalendarView = ({
     });
   };
 
-  const { month, year, startingDayOfWeek, totalDays } = getMonthDetails();
+  const isPastDate = (date: Date) => {
+    return date < new Date(Date.now() - 86400000);
+  };
 
-  const monthNames = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
-  ];
+  const getPostStatusColor = (post: PostType) => {
+    switch (post.status) {
+      case "draft":
+        return "bg-gray-100 text-gray-800";
+      case "scheduled":
+        return "bg-blue-100 text-blue-800";
+      case "posted":
+        return "bg-green-100 text-green-800";
+      default:
+        return "bg-gray-100 text-gray-800";
+    }
+  };
 
   const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
@@ -104,9 +79,10 @@ const CalendarView = ({
   return (
     <div className="bg-white rounded-lg shadow overflow-hidden">
       <div className="flex items-center justify-between px-6 py-4 border-b">
-        <h2 className="text-xl font-semibold text-gray-800">
-          {monthNames[month]} {year}
-        </h2>
+        <PostStatusTabs
+          selectedTab={selectedTab}
+          setSelectedTab={setSelectedTab}
+        />
         <div className="flex space-x-2">
           <button
             onClick={() => navigateMonth("prev")}
@@ -134,20 +110,32 @@ const CalendarView = ({
         ))}
 
         {calendarDays.map((day, index) => {
+          const date = new Date(
+            currentMonth.getFullYear(),
+            currentMonth.getMonth(),
+            day || 1
+          );
           const postsForDay = day ? getPostsForDay(day) : [];
           const hasEvents = postsForDay.length > 0;
+          const isPast = day ? isPastDate(date) : false;
 
           return (
             <div
               key={index}
-              className={`min-h-[100px] bg-white p-2 text-gray-700 ${
-                day ? "hover:bg-gray-50 cursor-pointer" : ""
-              }`}
-              onClick={() => day && onAddPost(new Date(year, month, day))}
+              className={`min-h-[100px] bg-white p-2 ${
+                isPast ? "text-gray-400" : "text-gray-700"
+              } ${day ? "hover:bg-gray-50 cursor-pointer" : ""}`}
+              onClick={() => day && !isPast && onAddPost(date)}
             >
               {day && (
                 <>
-                  <div className="font-semibold text-right">{day}</div>
+                  <div
+                    className={`font-semibold text-right ${
+                      isPast ? "text-gray-400" : ""
+                    }`}
+                  >
+                    {day}
+                  </div>
                   <div className="mt-2 space-y-1">
                     {hasEvents ? (
                       postsForDay.map((post) => (
@@ -157,7 +145,9 @@ const CalendarView = ({
                             e.stopPropagation();
                             onEditPost(post);
                           }}
-                          className="bg-indigo-100 text-indigo-800 p-1 rounded text-xs truncate"
+                          className={`${getPostStatusColor(
+                            post
+                          )} p-1 rounded text-xs truncate cursor-pointer hover:opacity-90 transition-opacity`}
                         >
                           {post.title}
                         </div>
