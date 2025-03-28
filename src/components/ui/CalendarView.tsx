@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { PlusIcon } from "@heroicons/react/24/outline";
 import { useGetMonthDetails } from "../../hooks/useGetMonthDetails";
-import PostStatusTabs, { getDisplayStatus } from "./PostStatusTabs";
+import PostStatusTabs from "./PostStatusTabs";
 import CalendarNav from "./CalendarNav";
 import { PostType } from "@/types";
 
@@ -24,7 +24,7 @@ const CalendarView = ({
 }: CalendarViewProps) => {
   const filteredPosts = posts.filter((post) => {
     if (selectedTab === "all") return true;
-    return getDisplayStatus(post) === selectedTab;
+    return post.status === selectedTab;
   });
 
   const [currentMonth, setCurrentMonth] = useState(new Date());

@@ -1,23 +1,8 @@
 import React from "react";
 import { PostType } from "@/types";
 
-export const getDisplayStatus = (
-  post: PostType
-): "draft" | "scheduled" | "posted" => {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const postDate = new Date(post.date);
-  postDate.setHours(0, 0, 0, 0);
-
-  if (post.status === "draft") {
-    return "draft";
-  }
-
-  if (postDate < today) {
-    return "posted";
-  }
-
-  return "scheduled";
+export const getDisplayStatus = (post: PostType): "draft" | "active" => {
+  return post.status;
 };
 
 const PostStatusTabs = ({
@@ -29,9 +14,8 @@ const PostStatusTabs = ({
 }) => {
   const tabs: Tab[] = [
     { label: "All Posts", value: "all" },
+    { label: "Published", value: "published" },
     { label: "Drafts", value: "draft" },
-    { label: "Scheduled", value: "scheduled" },
-    { label: "Posted", value: "posted" },
   ];
 
   return (
