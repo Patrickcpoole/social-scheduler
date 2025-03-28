@@ -1,34 +1,28 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
+import { PlusIcon } from "@heroicons/react/24/outline";
 import { useGetMonthDetails } from "../../hooks/useGetMonthDetails";
 import PostStatusTabs from "./PostStatusTabs";
-
+import CalendarNav from "./CalendarNav";
 type CalendarViewProps = {
   posts: PostType[];
   onAddPost: (date: Date) => void;
   onEditPost: (post: PostType) => void;
+  selectedTab: string;
+  setSelectedTab: (tab: string) => void;
 };
 
 const CalendarView = ({
   posts = [],
   onAddPost,
   onEditPost,
+  selectedTab,
+  setSelectedTab,
 }: CalendarViewProps) => {
   const [currentMonth, setCurrentMonth] = useState(new Date());
-  const [selectedTab, setSelectedTab] = useState("all");
-  const { startingDayOfWeek, totalDays } = useGetMonthDetails(currentMonth);
 
-  const navigateMonth = (direction: "prev" | "next") => {
-    const newMonth = new Date(currentMonth);
-    if (direction === "prev") {
-      newMonth.setMonth(newMonth.getMonth() - 1);
-    } else {
-      newMonth.setMonth(newMonth.getMonth() + 1);
-    }
-    setCurrentMonth(newMonth);
-  };
+  const { startingDayOfWeek, totalDays } = useGetMonthDetails(currentMonth);
 
   // Get posts for a specific day
   const getPostsForDay = (day: number) => {
@@ -83,20 +77,11 @@ const CalendarView = ({
           selectedTab={selectedTab}
           setSelectedTab={setSelectedTab}
         />
-        <div className="flex space-x-2">
-          <button
-            onClick={() => navigateMonth("prev")}
-            className="p-2 rounded-full hover:bg-gray-100"
-          >
-            <ChevronLeftIcon className="h-5 w-5 text-gray-600" />
-          </button>
-          <button
-            onClick={() => navigateMonth("next")}
-            className="p-2 rounded-full hover:bg-gray-100"
-          >
-            <ChevronRightIcon className="h-5 w-5 text-gray-600" />
-          </button>
-        </div>
+
+        <CalendarNav
+          currentMonth={currentMonth}
+          setCurrentMonth={setCurrentMonth}
+        />
       </div>
 
       <div className="grid grid-cols-7 gap-px bg-gray-200">
@@ -122,9 +107,9 @@ const CalendarView = ({
           return (
             <div
               key={index}
-              className={`min-h-[100px] bg-white p-2 ${
+              className={`min-h-[100px] bg-white p-2 relative group ${
                 isPast ? "text-gray-400" : "text-gray-700"
-              } ${day ? "hover:bg-gray-50 cursor-pointer" : ""}`}
+              } ${day ? "hover:bg-gray-50" : ""}`}
               onClick={() => day && !isPast && onAddPost(date)}
             >
               {day && (
@@ -136,24 +121,42 @@ const CalendarView = ({
                   >
                     {day}
                   </div>
-                  <div className="mt-2 space-y-1">
-                    {hasEvents ? (
-                      postsForDay.map((post) => (
-                        <div
-                          key={post.id}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            onEditPost(post);
-                          }}
-                          className={`${getPostStatusColor(
-                            post
-                          )} p-1 rounded text-xs truncate cursor-pointer hover:opacity-90 transition-opacity`}
-                        >
-                          {post.title}
-                        </div>
-                      ))
-                    ) : (
-                      <div className="text-xs text-gray-400">No posts</div>
+                  <div className="mt-2 space-y-1 flex-1">
+                    <div
+                      className={`${
+                        !hasEvents ? "group-hover:hidden" : ""
+                      } min-h-[60px]`}
+                    >
+                      {hasEvents ? (
+                        postsForDay.map((post) => (
+                          <div
+                            key={post.id}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              onEditPost(post);
+                            }}
+                            className={`${getPostStatusColor(
+                              post
+                            )} p-1 rounded text-xs truncate cursor-pointer hover:opacity-90 transition-opacity`}
+                          >
+                            {post.referenceTitle}
+                          </div>
+                        ))
+                      ) : (
+                        <div className="text-xs text-gray-400">No posts</div>
+                      )}
+                    </div>
+                    {!hasEvents && (
+                      <button
+                        className="hidden cursor-pointer group-hover:flex w-full bg-purple-100 text-purple-800 text-xs 
+                        py-1 px-2 rounded hover:bg-purple-200 transition-colors min-h-[60px] items-center justify-center"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onAddPost(date);
+                        }}
+                      >
+                        <PlusIcon className="h-5 w-5" />
+                      </button>
                     )}
                   </div>
                 </>

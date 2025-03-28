@@ -6,6 +6,7 @@ import {
   PlayIcon,
   PhotoIcon,
   VideoCameraIcon,
+  InformationCircleIcon,
 } from "@heroicons/react/24/outline";
 import CaptionGenerator from "./CaptionGenerator";
 import ImageGenerator from "./ImageGenerator";
@@ -33,6 +34,7 @@ const PostForm = ({ post, onSave, onCancel, selectedDate }: PostFormProps) => {
   const [formData, setFormData] = useState<Omit<PostType, "id">>({
     date: post?.date || selectedDate || new Date(),
     caption: post?.caption || "",
+    referenceTitle: post?.referenceTitle || "",
     imageUrl: post?.imageUrl || "",
     videoUrl: post?.videoUrl || "",
     frequency: post?.frequency || "once",
@@ -44,6 +46,10 @@ const PostForm = ({ post, onSave, onCancel, selectedDate }: PostFormProps) => {
       .string()
       .required("Caption is required")
       .min(5, "Caption must be at least 5 characters"),
+    referenceTitle: yup
+      .string()
+      .required("Reference title is required")
+      .max(50, "Reference title must be less than 50 characters"),
     date: yup
       .date()
       .required("Date is required")
@@ -84,6 +90,7 @@ const PostForm = ({ post, onSave, onCancel, selectedDate }: PostFormProps) => {
     resolver: yupResolver(postSchema),
     defaultValues: {
       caption: formData.caption,
+      referenceTitle: formData.referenceTitle,
       date: formData.date,
       frequency: formData.frequency,
       imageUrl: formData.imageUrl,
@@ -97,6 +104,7 @@ const PostForm = ({ post, onSave, onCancel, selectedDate }: PostFormProps) => {
       setFormData({
         date: post.date,
         caption: post.caption,
+        referenceTitle: post.referenceTitle,
         imageUrl: post.imageUrl || "",
         videoUrl: post.videoUrl || "",
         frequency: post.frequency || "once",
@@ -105,6 +113,7 @@ const PostForm = ({ post, onSave, onCancel, selectedDate }: PostFormProps) => {
 
       reset({
         caption: post.caption,
+        referenceTitle: post.referenceTitle,
         date: post.date,
         frequency: post.frequency || "once",
         imageUrl: post.imageUrl || "",
@@ -335,6 +344,44 @@ const PostForm = ({ post, onSave, onCancel, selectedDate }: PostFormProps) => {
                           </p>
                         )}
                       </div>
+                    </div>
+
+                    <div>
+                      <div className="flex items-center">
+                        <label
+                          htmlFor="referenceTitle"
+                          className="block text-sm font-medium text-gray-700"
+                        >
+                          Reference Title
+                        </label>
+                        <Tooltip content="This title helps you identify your post in the calendar view (not included in the actual post)">
+                          <InformationCircleIcon className="ml-1.5 h-4 w-4 text-gray-400" />
+                        </Tooltip>
+                      </div>
+                      <input
+                        type="text"
+                        id="referenceTitle"
+                        {...register("referenceTitle")}
+                        value={formData.referenceTitle}
+                        onChange={(e) => {
+                          handleFormChange(e);
+                          setValue("referenceTitle", e.target.value);
+                        }}
+                        className={`mt-1 block w-full border ${
+                          errors.referenceTitle
+                            ? "border-red-500"
+                            : "border-gray-300"
+                        } rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm`}
+                        placeholder="e.g., 'Monday Coffee Post' or 'Product Launch Announcement'"
+                      />
+                      {errors.referenceTitle && (
+                        <p className="mt-1 text-sm text-red-600">
+                          {errors.referenceTitle.message}
+                        </p>
+                      )}
+                      <p className="mt-1 text-xs text-gray-500">
+                        This helps you identify your post in the calendar view
+                      </p>
                     </div>
 
                     <div>
