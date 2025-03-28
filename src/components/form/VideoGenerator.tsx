@@ -130,7 +130,6 @@ const VideoGenerator = ({ onSelectVideo }: VideoGeneratorProps) => {
   };
 
   const hasImages = mediaItems.some((item) => item.type === "image");
-  const hasAudio = mediaItems.some((item) => item.type === "audio");
 
   return (
     <div className="bg-white rounded-lg shadow-md overflow-hidden">
