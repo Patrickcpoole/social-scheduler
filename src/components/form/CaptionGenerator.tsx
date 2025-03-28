@@ -63,7 +63,7 @@ const CaptionGenerator = ({ onSelectCaption }: CaptionGeneratorProps) => {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md overflow-hidden text-gray-700">
+    <div className="bg-white rounded-lg shadow-md overflow-hidden ">
       <div className="p-6 border-b">
         <h2 className="text-xl font-semibold text-gray-800">
           Caption Generator
@@ -73,7 +73,7 @@ const CaptionGenerator = ({ onSelectCaption }: CaptionGeneratorProps) => {
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="p-6 space-y-4">
+      <form onSubmit={handleSubmit} className="p-6 space-y-4 text-gray-700">
         <div>
           <label
             htmlFor="topic"
