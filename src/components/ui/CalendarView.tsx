@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
-import { useGetMonthDetails } from "../hooks/useGetMonthDetails";
+import { useGetMonthDetails } from "../../hooks/useGetMonthDetails";
 import PostStatusTabs from "./PostStatusTabs";
 
 type CalendarViewProps = {

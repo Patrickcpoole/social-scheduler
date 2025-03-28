@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import CalendarView from "../components/CalendarView";
-import PostForm from "../components/PostForm";
+import CalendarView from "../components/ui/CalendarView";
+import PostForm from "../components/form/PostForm";
 
 export default function Home() {
   const [posts, setPosts] = useState<PostType[]>([

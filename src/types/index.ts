@@ -1,12 +1,11 @@
 export type PostType = {
   id: string;
   date: Date;
-  title: string;
-  content: string;
+  caption: string;
   imageUrl?: string;
   videoUrl?: string;
   frequency?: "once" | "daily" | "weekly" | "biweekly" | "monthly";
-  status?: PostStatus;
+  status: PostStatus;
 };
 
 export type PostStatus =
