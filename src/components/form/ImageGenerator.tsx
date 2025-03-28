@@ -79,7 +79,7 @@ const ImageGenerator = ({ onSelectImage }: ImageGeneratorProps) => {
             onChange={(e) => setPrompt(e.target.value)}
             placeholder="Describe the image you want to generate..."
             rows={3}
-            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:border-[#7137ff] sm:text-sm"
             required
           />
         </div>
@@ -93,7 +93,7 @@ const ImageGenerator = ({ onSelectImage }: ImageGeneratorProps) => {
               id="style"
               value={style}
               onChange={(e) => setStyle(e.target.value)}
-              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:border-[#7137ff] sm:text-sm"
             >
               <option value="realistic">Realistic</option>
               <option value="cartoon">Cartoon</option>
@@ -114,7 +114,7 @@ const ImageGenerator = ({ onSelectImage }: ImageGeneratorProps) => {
               id="ratio"
               value={ratio}
               onChange={(e) => setRatio(e.target.value)}
-              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:border-[#7137ff] sm:text-sm"
             >
               <option value="1:1">Square (1:1)</option>
               <option value="4:5">Portrait (4:5)</option>
@@ -130,8 +130,8 @@ const ImageGenerator = ({ onSelectImage }: ImageGeneratorProps) => {
             disabled={isLoading || !prompt}
             className={`w-full inline-flex justify-center items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-base font-medium text-white ${
               isLoading || !prompt
-                ? "bg-indigo-300 cursor-not-allowed"
-                : "bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 cursor-pointer focus:ring-offset-2 focus:ring-indigo-500"
+                ? "bg-[#7137ff]/30 cursor-not-allowed"
+                : "bg-[#7137ff] hover:bg-[#7137ff]/80 focus:outline-none focus:ring-2 cursor-pointer focus:ring-offset-2 focus:ring-[#7137ff]"
             }`}
           >
             {isLoading ? (
@@ -189,7 +189,7 @@ const ImageGenerator = ({ onSelectImage }: ImageGeneratorProps) => {
                 <div className="mt-3 flex justify-end">
                   <button
                     onClick={() => onSelectImage(imageUrl)}
-                    className="text-sm text-indigo-600 hover:text-indigo-900 font-medium cursor-pointer"
+                    className="text-sm text-[#7137ff] hover:text-[#7137ff]/80 font-medium cursor-pointer"
                   >
                     Use this image
                   </button>

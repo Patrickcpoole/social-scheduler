@@ -124,7 +124,7 @@ const CaptionGenerator = ({ onSelectCaption }: CaptionGeneratorProps) => {
             id="length"
             value={length}
             onChange={(e) => setLength(e.target.value)}
-            className="mt-1 block w-full border border-gray-300 text-gray-700  rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            className="mt-1 block w-full border border-gray-300 text-gray-700 cursor-pointer rounded-md shadow-sm py-2 px-3 focus:outline-none focus:border-[#7137ff] sm:text-sm"
           >
             <option value="short">Short</option>
             <option value="medium">Medium</option>
@@ -138,8 +138,8 @@ const CaptionGenerator = ({ onSelectCaption }: CaptionGeneratorProps) => {
             disabled={isLoading || !topic}
             className={`w-full inline-flex justify-center items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-base font-medium text-white ${
               isLoading || !topic
-                ? "bg-indigo-300 cursor-not-allowed"
-                : "bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 cursor-pointer focus:ring-offset-2 focus:ring-indigo-500"
+                ? "bg-[#7137ff]/30 cursor-not-allowed"
+                : "bg-[#7137ff] hover:bg-[#7137ff]/80 focus:outline-none focus:ring-2 cursor-pointer focus:ring-offset-2 focus:ring-[#7137ff]"
             }`}
           >
             {isLoading ? (
@@ -190,7 +190,7 @@ const CaptionGenerator = ({ onSelectCaption }: CaptionGeneratorProps) => {
                 <div className="mt-3 flex justify-end">
                   <button
                     onClick={() => onSelectCaption(caption)}
-                    className="text-sm text-indigo-600 hover:text-indigo-900 font-medium cursor-pointer"
+                    className="text-sm text-[#7137ff] hover:text-[#7137ff]/80 font-medium cursor-pointer"
                   >
                     Use this caption
                   </button>

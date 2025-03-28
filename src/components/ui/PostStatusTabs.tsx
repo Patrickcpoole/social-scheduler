@@ -19,10 +19,10 @@ const PostStatusTabs = ({
       {tabs.map((tab) => (
         <button
           key={tab.value}
-          className={`bg-white px-4 py-2 cursor-pointer transition-colors duration-200 ${
+          className={`bg-white px-4 py-2  transition-colors duration-200 ${
             selectedTab === tab.value
               ? "bg-white text-[#7137ff] border-b-2 border-[#7137ff] font-medium"
-              : "border-gray-400 text-gray-500 hover:text-gray-700 hover:bg-gray-50"
+              : "border-gray-400 text-gray-500 hover:text-gray-700 hover:bg-gray-50 cursor-pointer"
           }`}
           onClick={() => setSelectedTab(tab.value)}
         >

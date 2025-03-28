@@ -6,6 +6,7 @@ export type PostType = {
   imageUrl?: string;
   videoUrl?: string;
   frequency?: "once" | "daily" | "weekly" | "biweekly" | "monthly";
+  frequencyRange?: Date;
   status: PostStatus;
 };
 

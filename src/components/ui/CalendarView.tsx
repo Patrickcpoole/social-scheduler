@@ -33,11 +33,48 @@ const CalendarView = ({
     );
     return posts.filter((post) => {
       const postDate = new Date(post.date);
-      return (
-        postDate.getDate() === day &&
-        postDate.getMonth() === date.getMonth() &&
-        postDate.getFullYear() === date.getFullYear()
-      );
+
+      // If it's a one-time post, just check if it matches the current date
+      if (post.frequency === "once") {
+        return (
+          postDate.getDate() === day &&
+          postDate.getMonth() === date.getMonth() &&
+          postDate.getFullYear() === date.getFullYear()
+        );
+      }
+
+      // For recurring posts, check if the date falls within the frequency pattern
+      // and is before or equal to the frequencyRange
+      if (post.frequencyRange && date > post.frequencyRange) {
+        return false;
+      }
+
+      // Check if the date is after the post's start date
+      if (date < postDate) {
+        return false;
+      }
+
+      // Calculate the difference in days between the post date and current date
+      const diffTime = Math.abs(date.getTime() - postDate.getTime());
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+      // Check if the current date matches the frequency pattern
+      switch (post.frequency) {
+        case "daily":
+          return true;
+        case "weekly":
+          return diffDays % 7 === 0;
+        case "biweekly":
+          return diffDays % 14 === 0;
+        case "monthly":
+          return (
+            postDate.getDate() === day &&
+            date >= postDate &&
+            date <= (post.frequencyRange || new Date(9999, 11, 31))
+          );
+        default:
+          return false;
+      }
     });
   };
 
@@ -78,10 +115,19 @@ const CalendarView = ({
           setSelectedTab={setSelectedTab}
         />
 
-        <CalendarNav
-          currentMonth={currentMonth}
-          setCurrentMonth={setCurrentMonth}
-        />
+        <div className="flex items-center gap-4">
+          <CalendarNav
+            currentMonth={currentMonth}
+            setCurrentMonth={setCurrentMonth}
+          />
+          <button
+            onClick={() => onAddPost(new Date())}
+            className="flex items-center gap-2 px-4 py-2 bg-[#7137ff] text-white rounded-lg cursor-pointer transition-colors hover:bg-[#7137ff]/80"
+          >
+            <PlusIcon className="h-5 w-5" />
+            <span>Create Post</span>
+          </button>
+        </div>
       </div>
 
       <div className="grid grid-cols-7 gap-px bg-gray-200">
@@ -137,7 +183,7 @@ const CalendarView = ({
                             }}
                             className={`${getPostStatusColor(
                               post
-                            )} p-1 rounded text-xs truncate cursor-pointer hover:opacity-90 transition-opacity`}
+                            )} p-1 my-1 rounded text-xs truncate cursor-pointer hover:opacity-90 transition-opacity`}
                           >
                             {post.referenceTitle}
                           </div>
@@ -148,14 +194,14 @@ const CalendarView = ({
                     </div>
                     {!hasEvents && (
                       <button
-                        className="hidden cursor-pointer group-hover:flex w-full bg-purple-100 text-purple-800 text-xs 
-                        py-1 px-2 rounded hover:bg-purple-200 transition-colors min-h-[60px] items-center justify-center"
+                        className="hidden cursor-pointer group-hover:flex w-full bg-[#7137ff]/30 text-white text-xs 
+                        py-1 px-2 rounded  transition-colors min-h-[60px] items-center justify-center"
                         onClick={(e) => {
                           e.stopPropagation();
                           onAddPost(date);
                         }}
                       >
-                        <PlusIcon className="h-5 w-5" />
+                        <PlusIcon className="h-5 w-5 text-[#7137ff]" />
                       </button>
                     )}
                   </div>

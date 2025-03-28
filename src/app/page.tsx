@@ -17,6 +17,11 @@ export default function Home() {
     {
       id: "post-2",
       date: new Date(new Date().getFullYear(), new Date().getMonth(), 22),
+      frequencyRange: new Date(
+        new Date().getFullYear(),
+        new Date().getMonth() + 1,
+        22
+      ),
       referenceTitle: "Weekly Tips",
       caption: "Top 5 tips for better productivity. #productivity",
       frequency: "weekly",
@@ -36,7 +41,7 @@ export default function Home() {
       referenceTitle: "Merch Drop",
       caption: "Get your new merch now! #merch",
       frequency: "once",
-      status: "drafts",
+      status: "draft",
     },
     {
       id: "post-5",
@@ -44,7 +49,7 @@ export default function Home() {
       referenceTitle: "Monday Newsletter",
       caption: "The latest news and updates from our team. #newsletter",
       frequency: "once",
-      status: "drafts",
+      status: "draft",
     },
   ]);
 

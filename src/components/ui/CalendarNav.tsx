@@ -20,7 +20,7 @@ const CalendarNav = ({
     <div className="flex space-x-2  items-center justify-center">
       <button
         onClick={() => navigateMonth("prev")}
-        className="p-2 rounded-full hover:bg-gray-100 "
+        className="p-2 rounded-full hover:bg-gray-100 cursor-pointer"
       >
         <ChevronLeftIcon className="h-5 w-5 text-gray-600" />
       </button>
@@ -47,7 +47,7 @@ const CalendarNav = ({
       </h3>
       <button
         onClick={() => navigateMonth("next")}
-        className="p-2 rounded-full hover:bg-gray-100"
+        className="p-2 rounded-full hover:bg-gray-100 cursor-pointer"
       >
         <ChevronRightIcon className="h-5 w-5 text-gray-600" />
       </button>

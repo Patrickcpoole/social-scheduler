@@ -31,15 +31,12 @@ type Tab = "basic" | "caption" | "image" | "video";
 const PostForm = ({ post, onSave, onCancel, selectedDate }: PostFormProps) => {
   const [activeTab, setActiveTab] = useState<Tab>("basic");
 
-  const [formData, setFormData] = useState<Omit<PostType, "id">>({
-    date: post?.date || selectedDate || new Date(),
-    caption: post?.caption || "",
-    referenceTitle: post?.referenceTitle || "",
-    imageUrl: post?.imageUrl || "",
-    videoUrl: post?.videoUrl || "",
-    frequency: post?.frequency || "once",
-    status: post?.status || "draft",
-  });
+  const formatDateForInput = (date: Date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
 
   const postSchema = yup.object({
     caption: yup
@@ -71,6 +68,20 @@ const PostForm = ({ post, onSave, onCancel, selectedDate }: PostFormProps) => {
         "Invalid frequency"
       )
       .required("Frequency is required"),
+    frequencyRange: yup.date().when("frequency", {
+      is: (val: string) => val !== "once",
+      then: (schema) =>
+        schema
+          .required("End date is required for recurring posts")
+          .test(
+            "date-validation",
+            "End date must be after start date",
+            function (value) {
+              return value > this.parent.date;
+            }
+          ),
+      otherwise: (schema) => schema.optional(),
+    }),
     imageUrl: yup.string().optional(),
     videoUrl: yup.string().optional(),
     status: yup
@@ -79,52 +90,102 @@ const PostForm = ({ post, onSave, onCancel, selectedDate }: PostFormProps) => {
       .required("Status is required"),
   });
 
-  // Initialize React Hook Form with yup resolver
   const {
     register,
     handleSubmit,
     formState: { errors },
     setValue,
     reset,
+    watch,
   } = useForm({
     resolver: yupResolver(postSchema),
     defaultValues: {
-      caption: formData.caption,
-      referenceTitle: formData.referenceTitle,
-      date: formData.date,
-      frequency: formData.frequency,
-      imageUrl: formData.imageUrl,
-      videoUrl: formData.videoUrl,
-      status: formData.status,
+      caption: post?.caption || "",
+      referenceTitle: post?.referenceTitle || "",
+      date: post?.date
+        ? formatDateForInput(new Date(post.date))
+        : selectedDate
+        ? formatDateForInput(selectedDate)
+        : formatDateForInput(new Date()),
+      frequency: post?.frequency || "once",
+      frequencyRange: post?.frequencyRange
+        ? formatDateForInput(new Date(post.frequencyRange))
+        : post?.frequency !== "once" || selectedDate
+        ? formatDateForInput(
+            new Date(
+              selectedDate?.getFullYear() || new Date().getFullYear(),
+              (selectedDate?.getMonth() || new Date().getMonth()) + 1,
+              selectedDate?.getDate() || new Date().getDate()
+            )
+          )
+        : undefined,
+      imageUrl: post?.imageUrl || "",
+      videoUrl: post?.videoUrl || "",
+      status: post?.status || "draft",
     },
   });
 
+  // Watch the frequency value to conditionally show frequencyRange
+  const frequency = watch("frequency");
+
   useEffect(() => {
     if (post) {
-      setFormData({
-        date: post.date,
-        caption: post.caption,
-        referenceTitle: post.referenceTitle,
-        imageUrl: post.imageUrl || "",
-        videoUrl: post.videoUrl || "",
-        frequency: post.frequency || "once",
-        status: post.status || "draft",
-      });
+      // Ensure we have proper Date objects and format them for input
+      const postDate = formatDateForInput(new Date(post.date));
+      const frequencyRangeDate = post.frequencyRange
+        ? formatDateForInput(new Date(post.frequencyRange))
+        : undefined;
 
       reset({
         caption: post.caption,
         referenceTitle: post.referenceTitle,
-        date: post.date,
+        date: postDate,
         frequency: post.frequency || "once",
+        frequencyRange: frequencyRangeDate,
         imageUrl: post.imageUrl || "",
         videoUrl: post.videoUrl || "",
         status: post.status || "draft",
       });
     } else if (selectedDate) {
-      setFormData((prev) => ({ ...prev, date: selectedDate }));
-      setValue("date", selectedDate);
+      setValue("date", formatDateForInput(selectedDate));
     }
   }, [post, selectedDate, reset, setValue]);
+
+  const onSubmitForm = (data: PostType) => {
+    // Convert date strings back to Date objects
+    const formData = {
+      ...data,
+      date: new Date(data.date),
+      frequencyRange: data.frequencyRange
+        ? new Date(data.frequencyRange)
+        : undefined,
+    };
+
+    onSave({
+      id: post?.id || `post-${Date.now()}`,
+      ...formData,
+    });
+  };
+
+  const handleSelectCaption = (caption: string) => {
+    setValue("caption", caption);
+    setActiveTab("basic");
+  };
+
+  const handleSelectImage = (imageUrl: string) => {
+    setValue("imageUrl", imageUrl);
+    setActiveTab("basic");
+  };
+
+  const handleSelectVideo = (videoUrl: string) => {
+    setValue("videoUrl", videoUrl);
+    setActiveTab("basic");
+  };
+
+  const isPastDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date < new Date(Date.now() - 86400000);
+  };
 
   const handleFormChange = (
     e: React.ChangeEvent<
@@ -132,57 +193,12 @@ const PostForm = ({ post, onSave, onCancel, selectedDate }: PostFormProps) => {
     >
   ) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const dateValue = e.target.value;
-    const [year, month, day] = dateValue.split("-").map(Number);
-    const newDate = new Date(year, month - 1, day); // month is 0-indexed in JS Date
-    setFormData((prev) => ({ ...prev, date: newDate }));
-    setValue("date", newDate);
-  };
-
-  const onSubmitForm = (data: PostType) => {
-    onSave({
-      id: post?.id || `post-${Date.now()}`,
-      ...data,
-      imageUrl: formData.imageUrl,
-      videoUrl: formData.videoUrl,
-    });
-  };
-
-  const handleSelectCaption = (caption: string) => {
-    setFormData((prev) => ({ ...prev, caption }));
-    setValue("caption", caption);
-    setActiveTab("basic");
-  };
-
-  const handleSelectImage = (imageUrl: string) => {
-    setFormData((prev) => ({ ...prev, imageUrl }));
-    setActiveTab("basic");
-  };
-
-  const handleSelectVideo = (videoUrl: string) => {
-    setFormData((prev) => ({ ...prev, videoUrl }));
-    setActiveTab("basic");
-  };
-
-  const formatDateForInput = (date: Date) => {
-    const year = date.getFullYear();
-    // Month is 0-indexed in JS, so add 1 and pad with 0 if needed
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
-    return `${year}-${month}-${day}`;
-  };
-
-  const isPastDate = (date: Date) => {
-    return date < new Date(Date.now() - 86400000);
+    setValue(name, value);
   };
 
   const handleStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newStatus = e.target.value;
-    const currentDate = formData.date;
+    const currentDate = watch("date");
 
     // If changing to scheduled and date is in past, show warning
     if (newStatus === "scheduled" && isPastDate(currentDate)) {
@@ -194,8 +210,7 @@ const PostForm = ({ post, onSave, onCancel, selectedDate }: PostFormProps) => {
         return;
       }
       const today = new Date();
-      setFormData((prev) => ({ ...prev, date: today }));
-      setValue("date", today);
+      setValue("date", formatDateForInput(today));
     }
 
     handleFormChange(e);
@@ -206,7 +221,7 @@ const PostForm = ({ post, onSave, onCancel, selectedDate }: PostFormProps) => {
     if (file) {
       // Create a local URL for the file
       const imageUrl = URL.createObjectURL(file);
-      setFormData((prev) => ({ ...prev, imageUrl }));
+      setValue("imageUrl", imageUrl);
     }
   };
 
@@ -239,7 +254,7 @@ const PostForm = ({ post, onSave, onCancel, selectedDate }: PostFormProps) => {
                 onClick={() => setActiveTab("basic")}
                 className={`py-2 px-4 font-medium text-sm ${
                   activeTab === "basic"
-                    ? "border-b-2 border-indigo-500 text-indigo-600"
+                    ? "border-b-2 border-[#7137ff] text-[#7137ff]"
                     : "text-gray-500 hover:text-gray-700 cursor-pointer"
                 }`}
               >
@@ -249,7 +264,7 @@ const PostForm = ({ post, onSave, onCancel, selectedDate }: PostFormProps) => {
                 onClick={() => setActiveTab("caption")}
                 className={`py-2 px-4 font-medium text-sm ${
                   activeTab === "caption"
-                    ? "border-b-2 border-indigo-500 text-indigo-600"
+                    ? "border-b-2 border-[#7137ff] text-[#7137ff]"
                     : "text-gray-500 hover:text-gray-700 cursor-pointer"
                 }`}
               >
@@ -259,7 +274,7 @@ const PostForm = ({ post, onSave, onCancel, selectedDate }: PostFormProps) => {
                 onClick={() => setActiveTab("image")}
                 className={`py-2 px-4 font-medium text-sm ${
                   activeTab === "image"
-                    ? "border-b-2 border-indigo-500 text-indigo-600"
+                    ? "border-b-2 border-[#7137ff] text-[#7137ff]"
                     : "text-gray-500 hover:text-gray-700 cursor-pointer"
                 }`}
               >
@@ -269,7 +284,7 @@ const PostForm = ({ post, onSave, onCancel, selectedDate }: PostFormProps) => {
                 onClick={() => setActiveTab("video")}
                 className={`py-2 px-4 font-medium text-sm ${
                   activeTab === "video"
-                    ? "border-b-2 border-indigo-500 text-indigo-600"
+                    ? "border-b-2 border-[#7137ff] text-[#7137ff]"
                     : "text-gray-500 hover:text-gray-700 cursor-pointer"
                 }`}
               >
@@ -287,34 +302,132 @@ const PostForm = ({ post, onSave, onCancel, selectedDate }: PostFormProps) => {
                   {/* Scrollable content area */}
                   <div className="flex-1 overflow-y-auto p-6 space-y-6 text-gray-800">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <label
-                          htmlFor="date"
-                          className="block text-sm font-medium"
-                        >
-                          Post Date
-                        </label>
-                        <input
-                          type="date"
-                          id="date"
-                          {...register("date")}
-                          value={formatDateForInput(formData.date)}
-                          onChange={handleDateChange}
-                          className={`mt-1 block w-full border ${
-                            errors.date ? "border-red-500" : "border-gray-300"
-                          } rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm ${
-                            isPastDate(formData.date) ? "text-gray-500" : ""
-                          }`}
-                        />
-                        {errors.date && (
-                          <p className="mt-1 text-sm text-red-600">
-                            {errors.date.message}
-                          </p>
-                        )}
-                        {isPastDate(formData.date) && (
-                          <p className="mt-1 text-sm text-gray-500">
-                            This is a past date
-                          </p>
+                      <div className="space-y-4">
+                        <div>
+                          <label
+                            htmlFor="frequency"
+                            className="block text-sm font-medium text-gray-700"
+                          >
+                            Posting Frequency
+                          </label>
+                          <select
+                            id="frequency"
+                            {...register("frequency")}
+                            className={`mt-1 block w-full border ${
+                              errors.frequency
+                                ? "border-red-500"
+                                : "border-gray-300"
+                            } rounded-md shadow-sm py-2 px-3 focus:outline-none focus:border-[#7137ff] sm:text-sm`}
+                          >
+                            <option value="once">Once</option>
+                            <option value="daily">Daily</option>
+                            <option value="weekly">Weekly</option>
+                            <option value="biweekly">Bi-weekly</option>
+                            <option value="monthly">Monthly</option>
+                          </select>
+                          {errors.frequency && (
+                            <p className="mt-1 text-sm text-red-600">
+                              {errors.frequency.message}
+                            </p>
+                          )}
+                        </div>
+
+                        {frequency === "once" ? (
+                          <div>
+                            <label
+                              htmlFor="date"
+                              className="block text-sm font-medium text-gray-700"
+                            >
+                              Post Date
+                            </label>
+                            <input
+                              type="date"
+                              id="date"
+                              {...register("date")}
+                              className={`mt-1 block w-full border ${
+                                errors.date
+                                  ? "border-red-500"
+                                  : "border-gray-300"
+                              } rounded-md shadow-sm py-2 px-3 focus:outline-none focus:border-[#7137ff] sm:text-sm ${
+                                isPastDate(watch("date")) ? "text-gray-500" : ""
+                              }`}
+                            />
+                            {errors.date && (
+                              <p className="mt-1 text-sm text-red-600">
+                                {errors.date.message}
+                              </p>
+                            )}
+                            {isPastDate(watch("date")) && (
+                              <p className="mt-1 text-sm text-gray-500">
+                                This is a past date
+                              </p>
+                            )}
+                          </div>
+                        ) : (
+                          <div className="space-y-4">
+                            <div className="grid grid-cols-2 gap-4">
+                              <div>
+                                <label
+                                  htmlFor="date"
+                                  className="block text-sm font-medium text-gray-700"
+                                >
+                                  Starts On
+                                </label>
+                                <input
+                                  type="date"
+                                  id="date"
+                                  {...register("date")}
+                                  className={`mt-1 block w-full border ${
+                                    errors.date
+                                      ? "border-red-500"
+                                      : "border-gray-300"
+                                  } rounded-md shadow-sm py-2 px-3 focus:outline-none focus:border-[#7137ff] sm:text-sm ${
+                                    isPastDate(watch("date"))
+                                      ? "text-gray-500"
+                                      : ""
+                                  }`}
+                                />
+                                {errors.date && (
+                                  <p className="mt-1 text-sm text-red-600">
+                                    {errors.date.message}
+                                  </p>
+                                )}
+                                {isPastDate(watch("date")) && (
+                                  <p className="mt-1 text-sm text-gray-500">
+                                    This is a past date
+                                  </p>
+                                )}
+                              </div>
+
+                              <div>
+                                <label
+                                  htmlFor="frequencyRange"
+                                  className="block text-sm font-medium text-gray-700"
+                                >
+                                  Ends On
+                                </label>
+                                <input
+                                  type="date"
+                                  id="frequencyRange"
+                                  {...register("frequencyRange")}
+                                  className={`mt-1 block w-full border ${
+                                    errors.frequencyRange
+                                      ? "border-red-500"
+                                      : "border-gray-300"
+                                  } rounded-md shadow-sm py-2 px-3 focus:outline-none focus:border-[#7137ff] sm:text-sm`}
+                                />
+                                {errors.frequencyRange && (
+                                  <p className="mt-1 text-sm text-red-600">
+                                    {errors.frequencyRange.message}
+                                  </p>
+                                )}
+                              </div>
+                            </div>
+                            <p className="text-xs text-gray-500">
+                              This post will be published {frequency} between
+                              these dates
+                            </p>
+                          </div>
                         )}
                       </div>
 
@@ -328,11 +441,11 @@ const PostForm = ({ post, onSave, onCancel, selectedDate }: PostFormProps) => {
                         <select
                           id="status"
                           {...register("status")}
-                          value={formData.status}
+                          value={watch("status")}
                           onChange={handleStatusChange}
                           className={`mt-1 block w-full border ${
                             errors.status ? "border-red-500" : "border-gray-300"
-                          } rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm`}
+                          } rounded-md shadow-sm py-2 px-3 focus:outline-none focus:border-[#7137ff] sm:text-sm`}
                         >
                           <option value="draft">Draft</option>
                           <option value="scheduled">Scheduled</option>
@@ -362,16 +475,15 @@ const PostForm = ({ post, onSave, onCancel, selectedDate }: PostFormProps) => {
                         type="text"
                         id="referenceTitle"
                         {...register("referenceTitle")}
-                        value={formData.referenceTitle}
+                        value={watch("referenceTitle")}
                         onChange={(e) => {
                           handleFormChange(e);
-                          setValue("referenceTitle", e.target.value);
                         }}
                         className={`mt-1 block w-full border ${
                           errors.referenceTitle
                             ? "border-red-500"
                             : "border-gray-300"
-                        } rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm`}
+                        } rounded-md shadow-sm py-2 px-3 focus:outline-none focus:border-[#7137ff] sm:text-sm`}
                         placeholder="e.g., 'Monday Coffee Post' or 'Product Launch Announcement'"
                       />
                       {errors.referenceTitle && (
@@ -398,7 +510,7 @@ const PostForm = ({ post, onSave, onCancel, selectedDate }: PostFormProps) => {
                             onClick={() => setActiveTab("caption")}
                             className="ml-2 cursor-pointer"
                           >
-                            <PlayIcon className="h-5 w-5 stroke-indigo-600 fill-transparent hover:fill-indigo-600 transition-all duration-200" />
+                            <PlayIcon className="h-5 w-5 stroke-[#7137ff] fill-transparent hover:fill-[#7137ff] transition-all duration-200" />
                           </button>
                         </Tooltip>
                       </div>
@@ -407,16 +519,15 @@ const PostForm = ({ post, onSave, onCancel, selectedDate }: PostFormProps) => {
                           id="caption"
                           {...register("caption")}
                           rows={4}
-                          value={formData.caption}
+                          value={watch("caption")}
                           onChange={(e) => {
                             handleFormChange(e);
-                            setValue("caption", e.target.value);
                           }}
                           className={`block w-full border ${
                             errors.caption
                               ? "border-red-500"
                               : "border-gray-300"
-                          } rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm`}
+                          } rounded-md shadow-sm py-2 px-3 focus:outline-none focus:border-[#7137ff] sm:text-sm`}
                           placeholder="Write your post caption..."
                         />
                       </div>
@@ -432,11 +543,11 @@ const PostForm = ({ post, onSave, onCancel, selectedDate }: PostFormProps) => {
                         Media Content
                       </label>
                       <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md relative">
-                        {formData.imageUrl ? (
+                        {watch("imageUrl") ? (
                           <div className="space-y-1 text-center relative w-full">
                             <div className="relative h-40 w-full">
                               <Image
-                                src={formData.imageUrl}
+                                src={watch("imageUrl")}
                                 alt="Selected media"
                                 fill
                                 className="object-contain rounded"
@@ -444,11 +555,8 @@ const PostForm = ({ post, onSave, onCancel, selectedDate }: PostFormProps) => {
                               <button
                                 type="button"
                                 onClick={() => {
-                                  URL.revokeObjectURL(formData.imageUrl);
-                                  setFormData((prev) => ({
-                                    ...prev,
-                                    imageUrl: "",
-                                  }));
+                                  URL.revokeObjectURL(watch("imageUrl"));
+                                  setValue("imageUrl", "");
                                 }}
                                 className="absolute top-2 right-2 p-1 bg-white rounded-full shadow-sm hover:bg-gray-100 cursor-pointer"
                               >
@@ -460,7 +568,7 @@ const PostForm = ({ post, onSave, onCancel, selectedDate }: PostFormProps) => {
                           <div className="space-y-1 text-center">
                             <PhotoIcon className="mx-auto h-12 w-12 text-gray-400" />
                             <div className="flex text-sm text-gray-600">
-                              <label className="relative cursor-pointer rounded-md font-medium text-indigo-600 hover:text-indigo-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500">
+                              <label className="relative cursor-pointer rounded-md font-medium text-[#7137ff] hover:text-[#7137ff]/80 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-[#7137ff]">
                                 <span>Upload a file</span>
                                 <input
                                   type="file"
@@ -480,7 +588,7 @@ const PostForm = ({ post, onSave, onCancel, selectedDate }: PostFormProps) => {
                               <button
                                 type="button"
                                 onClick={() => setActiveTab("image")}
-                                className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                                className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7137ff]"
                               >
                                 <PlayIcon className="-ml-0.5 mr-2 h-4 w-4" />{" "}
                                 Generate Image
@@ -488,7 +596,7 @@ const PostForm = ({ post, onSave, onCancel, selectedDate }: PostFormProps) => {
                               <button
                                 type="button"
                                 onClick={() => setActiveTab("video")}
-                                className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                                className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7137ff]"
                               >
                                 <VideoCameraIcon className="-ml-0.5 mr-2 h-4 w-4" />{" "}
                                 Generate Video
@@ -498,37 +606,6 @@ const PostForm = ({ post, onSave, onCancel, selectedDate }: PostFormProps) => {
                         )}
                       </div>
                     </div>
-
-                    <div>
-                      <label
-                        htmlFor="frequency"
-                        className="block text-sm font-medium text-gray-700"
-                      >
-                        Posting Frequency
-                      </label>
-                      <select
-                        id="frequency"
-                        {...register("frequency")}
-                        value={formData.frequency}
-                        onChange={handleFormChange}
-                        className={`mt-1 block w-full border ${
-                          errors.frequency
-                            ? "border-red-500"
-                            : "border-gray-300"
-                        } rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm`}
-                      >
-                        <option value="once">Once</option>
-                        <option value="daily">Daily</option>
-                        <option value="weekly">Weekly</option>
-                        <option value="biweekly">Bi-weekly</option>
-                        <option value="monthly">Monthly</option>
-                      </select>
-                      {errors.frequency && (
-                        <p className="mt-1 text-sm text-red-600">
-                          {errors.frequency.message}
-                        </p>
-                      )}
-                    </div>
                   </div>
 
                   {/* Fixed bottom button group */}
@@ -537,13 +614,13 @@ const PostForm = ({ post, onSave, onCancel, selectedDate }: PostFormProps) => {
                       <button
                         type="button"
                         onClick={onCancel}
-                        className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                        className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7137ff]"
                       >
                         Cancel
                       </button>
                       <button
                         type="submit"
-                        className="bg-indigo-600 py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white hover:bg-indigo-700 cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                        className="bg-[#7137ff] py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white hover:bg-[#7137ff]/80 cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7137ff]"
                       >
                         Save
                       </button>
