@@ -5,6 +5,7 @@ A web application that helps create and schedule social media posts with "AI Gen
 ## Features
 
 - Create and schedule social media posts
+- Generate captions and content with "AI"
 - View all scheduled posts in a calendar interface
 - Edit and delete scheduled posts
 
