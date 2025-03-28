@@ -12,7 +12,7 @@ export default function Home() {
       referenceTitle: "Product Launch",
       caption: "Introducing our new product line! #innovation",
       frequency: "once",
-      status: "posted",
+      status: "published",
     },
     {
       id: "post-2",
@@ -25,7 +25,7 @@ export default function Home() {
       referenceTitle: "Weekly Tips",
       caption: "Top 5 tips for better productivity. #productivity",
       frequency: "weekly",
-      status: "posted",
+      status: "published",
     },
     {
       id: "post-3",
@@ -33,7 +33,7 @@ export default function Home() {
       referenceTitle: "Product Launch",
       caption: "Introducing our new product line! #innovation",
       frequency: "once",
-      status: "scheduled",
+      status: "published",
     },
     {
       id: "post-4",

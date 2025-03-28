@@ -10,14 +10,9 @@ export type PostType = {
   status: PostStatus;
 };
 
-export type PostStatus =
-  | "all"
-  | "drafts"
-  | "scheduled"
-  | "published"
-  | "deleted";
+export type PostStatus = "draft" | "published";
 
 export type Tab = {
   label: string;
-  value: PostStatus;
+  value: PostStatus | "all" | "scheduled" | "posted";
 };

@@ -3,8 +3,10 @@
 import { useState } from "react";
 import { PlusIcon } from "@heroicons/react/24/outline";
 import { useGetMonthDetails } from "../../hooks/useGetMonthDetails";
-import PostStatusTabs from "./PostStatusTabs";
+import PostStatusTabs, { getDisplayStatus } from "./PostStatusTabs";
 import CalendarNav from "./CalendarNav";
+import { PostType } from "@/types";
+
 type CalendarViewProps = {
   posts: PostType[];
   onAddPost: (date: Date) => void;
@@ -14,12 +16,17 @@ type CalendarViewProps = {
 };
 
 const CalendarView = ({
-  posts = [],
+  posts,
   onAddPost,
   onEditPost,
   selectedTab,
   setSelectedTab,
 }: CalendarViewProps) => {
+  const filteredPosts = posts.filter((post) => {
+    if (selectedTab === "all") return true;
+    return getDisplayStatus(post) === selectedTab;
+  });
+
   const [currentMonth, setCurrentMonth] = useState(new Date());
 
   const { startingDayOfWeek, totalDays } = useGetMonthDetails(currentMonth);
@@ -31,7 +38,7 @@ const CalendarView = ({
       currentMonth.getMonth(),
       day
     );
-    return posts.filter((post) => {
+    return filteredPosts.filter((post) => {
       const postDate = new Date(post.date);
 
       // If it's a one-time post, just check if it matches the current date
@@ -82,17 +89,24 @@ const CalendarView = ({
     return date < new Date(Date.now() - 86400000);
   };
 
-  const getPostStatusColor = (post: PostType) => {
-    switch (post.status) {
-      case "draft":
-        return "bg-gray-100 text-gray-800";
-      case "scheduled":
-        return "bg-blue-100 text-blue-800";
-      case "posted":
-        return "bg-green-100 text-green-800";
-      default:
-        return "bg-gray-100 text-gray-800";
+  const getPostStatusColor = (post: PostType, date: Date) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const instanceDate = new Date(date);
+    instanceDate.setHours(0, 0, 0, 0);
+
+    if (post.status === "draft") {
+      return "bg-gray-100 text-gray-800";
     }
+
+    // If status is published, show green for past dates and blue for future dates
+    if (post.status === "published") {
+      return instanceDate < today
+        ? "bg-green-100 text-green-800"
+        : "bg-blue-100 text-blue-800";
+    }
+
+    return "bg-gray-100 text-gray-800";
   };
 
   const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
@@ -182,7 +196,8 @@ const CalendarView = ({
                               onEditPost(post);
                             }}
                             className={`${getPostStatusColor(
-                              post
+                              post,
+                              date
                             )} p-1 my-1 rounded text-xs truncate cursor-pointer hover:opacity-90 transition-opacity`}
                           >
                             {post.referenceTitle}

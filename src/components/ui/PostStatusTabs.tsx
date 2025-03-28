@@ -1,4 +1,24 @@
 import React from "react";
+import { PostType } from "@/types";
+
+export const getDisplayStatus = (
+  post: PostType
+): "draft" | "scheduled" | "posted" => {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const postDate = new Date(post.date);
+  postDate.setHours(0, 0, 0, 0);
+
+  if (post.status === "draft") {
+    return "draft";
+  }
+
+  if (postDate < today) {
+    return "posted";
+  }
+
+  return "scheduled";
+};
 
 const PostStatusTabs = ({
   selectedTab,

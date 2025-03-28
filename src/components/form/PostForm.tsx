@@ -94,7 +94,7 @@ const PostForm = ({
     videoUrl: yup.string().optional(),
     status: yup
       .string()
-      .oneOf(["draft", "scheduled", "posted"], "Invalid status")
+      .oneOf(["draft", "published"], "Invalid status")
       .required("Status is required"),
   });
 
@@ -486,8 +486,7 @@ const PostForm = ({
                           } rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-[#7137ff] focus:border-[#7137ff] sm:text-sm`}
                         >
                           <option value="draft">Draft</option>
-                          <option value="scheduled">Scheduled</option>
-                          <option value="posted">Posted</option>
+                          <option value="published">Published</option>
                         </select>
                         {errors.status && (
                           <p className="mt-1 text-sm text-red-600">
