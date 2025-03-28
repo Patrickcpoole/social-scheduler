@@ -254,7 +254,7 @@ const PostForm = ({ post, onSave, onCancel, selectedDate }: PostFormProps) => {
                 onClick={() => setActiveTab("basic")}
                 className={`py-2 px-4 font-medium text-sm ${
                   activeTab === "basic"
-                    ? "border-b-2 border-[#7137ff] text-[#7137ff]"
+                    ? "border-b-2 border-primary-500 text-primary-600"
                     : "text-gray-500 hover:text-gray-700 cursor-pointer"
                 }`}
               >
@@ -264,7 +264,7 @@ const PostForm = ({ post, onSave, onCancel, selectedDate }: PostFormProps) => {
                 onClick={() => setActiveTab("caption")}
                 className={`py-2 px-4 font-medium text-sm ${
                   activeTab === "caption"
-                    ? "border-b-2 border-[#7137ff] text-[#7137ff]"
+                    ? "border-b-2 border-primary-500 text-primary-600"
                     : "text-gray-500 hover:text-gray-700 cursor-pointer"
                 }`}
               >
@@ -274,7 +274,7 @@ const PostForm = ({ post, onSave, onCancel, selectedDate }: PostFormProps) => {
                 onClick={() => setActiveTab("image")}
                 className={`py-2 px-4 font-medium text-sm ${
                   activeTab === "image"
-                    ? "border-b-2 border-[#7137ff] text-[#7137ff]"
+                    ? "border-b-2 border-primary-500 text-primary-600"
                     : "text-gray-500 hover:text-gray-700 cursor-pointer"
                 }`}
               >
@@ -284,7 +284,7 @@ const PostForm = ({ post, onSave, onCancel, selectedDate }: PostFormProps) => {
                 onClick={() => setActiveTab("video")}
                 className={`py-2 px-4 font-medium text-sm ${
                   activeTab === "video"
-                    ? "border-b-2 border-[#7137ff] text-[#7137ff]"
+                    ? "border-b-2 border-primary-500 text-primary-600"
                     : "text-gray-500 hover:text-gray-700 cursor-pointer"
                 }`}
               >
@@ -317,7 +317,7 @@ const PostForm = ({ post, onSave, onCancel, selectedDate }: PostFormProps) => {
                               errors.frequency
                                 ? "border-red-500"
                                 : "border-gray-300"
-                            } rounded-md shadow-sm py-2 px-3 focus:outline-none focus:border-[#7137ff] sm:text-sm`}
+                            } rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm`}
                           >
                             <option value="once">Once</option>
                             <option value="daily">Daily</option>
@@ -348,7 +348,7 @@ const PostForm = ({ post, onSave, onCancel, selectedDate }: PostFormProps) => {
                                 errors.date
                                   ? "border-red-500"
                                   : "border-gray-300"
-                              } rounded-md shadow-sm py-2 px-3 focus:outline-none focus:border-[#7137ff] sm:text-sm ${
+                              } rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm ${
                                 isPastDate(watch("date")) ? "text-gray-500" : ""
                               }`}
                             />
@@ -381,7 +381,7 @@ const PostForm = ({ post, onSave, onCancel, selectedDate }: PostFormProps) => {
                                     errors.date
                                       ? "border-red-500"
                                       : "border-gray-300"
-                                  } rounded-md shadow-sm py-2 px-3 focus:outline-none focus:border-[#7137ff] sm:text-sm ${
+                                  } rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm ${
                                     isPastDate(watch("date"))
                                       ? "text-gray-500"
                                       : ""
@@ -414,7 +414,7 @@ const PostForm = ({ post, onSave, onCancel, selectedDate }: PostFormProps) => {
                                     errors.frequencyRange
                                       ? "border-red-500"
                                       : "border-gray-300"
-                                  } rounded-md shadow-sm py-2 px-3 focus:outline-none focus:border-[#7137ff] sm:text-sm`}
+                                  } rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm`}
                                 />
                                 {errors.frequencyRange && (
                                   <p className="mt-1 text-sm text-red-600">
@@ -445,7 +445,7 @@ const PostForm = ({ post, onSave, onCancel, selectedDate }: PostFormProps) => {
                           onChange={handleStatusChange}
                           className={`mt-1 block w-full border ${
                             errors.status ? "border-red-500" : "border-gray-300"
-                          } rounded-md shadow-sm py-2 px-3 focus:outline-none focus:border-[#7137ff] sm:text-sm`}
+                          } rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm`}
                         >
                           <option value="draft">Draft</option>
                           <option value="scheduled">Scheduled</option>
@@ -483,7 +483,7 @@ const PostForm = ({ post, onSave, onCancel, selectedDate }: PostFormProps) => {
                           errors.referenceTitle
                             ? "border-red-500"
                             : "border-gray-300"
-                        } rounded-md shadow-sm py-2 px-3 focus:outline-none focus:border-[#7137ff] sm:text-sm`}
+                        } rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm`}
                         placeholder="e.g., 'Monday Coffee Post' or 'Product Launch Announcement'"
                       />
                       {errors.referenceTitle && (
@@ -510,7 +510,7 @@ const PostForm = ({ post, onSave, onCancel, selectedDate }: PostFormProps) => {
                             onClick={() => setActiveTab("caption")}
                             className="ml-2 cursor-pointer"
                           >
-                            <PlayIcon className="h-5 w-5 stroke-[#7137ff] fill-transparent hover:fill-[#7137ff] transition-all duration-200" />
+                            <PlayIcon className="h-5 w-5 stroke-primary-600 fill-transparent hover:fill-primary-600 transition-all duration-200" />
                           </button>
                         </Tooltip>
                       </div>
@@ -527,7 +527,7 @@ const PostForm = ({ post, onSave, onCancel, selectedDate }: PostFormProps) => {
                             errors.caption
                               ? "border-red-500"
                               : "border-gray-300"
-                          } rounded-md shadow-sm py-2 px-3 focus:outline-none focus:border-[#7137ff] sm:text-sm`}
+                          } rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm`}
                           placeholder="Write your post caption..."
                         />
                       </div>
@@ -568,7 +568,7 @@ const PostForm = ({ post, onSave, onCancel, selectedDate }: PostFormProps) => {
                           <div className="space-y-1 text-center">
                             <PhotoIcon className="mx-auto h-12 w-12 text-gray-400" />
                             <div className="flex text-sm text-gray-600">
-                              <label className="relative cursor-pointer rounded-md font-medium text-[#7137ff] hover:text-[#7137ff]/80 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-[#7137ff]">
+                              <label className="relative cursor-pointer rounded-md font-medium text-primary-600 hover:text-primary-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-primary-500">
                                 <span>Upload a file</span>
                                 <input
                                   type="file"
@@ -588,7 +588,7 @@ const PostForm = ({ post, onSave, onCancel, selectedDate }: PostFormProps) => {
                               <button
                                 type="button"
                                 onClick={() => setActiveTab("image")}
-                                className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7137ff]"
+                                className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
                               >
                                 <PlayIcon className="-ml-0.5 mr-2 h-4 w-4" />{" "}
                                 Generate Image
@@ -596,7 +596,7 @@ const PostForm = ({ post, onSave, onCancel, selectedDate }: PostFormProps) => {
                               <button
                                 type="button"
                                 onClick={() => setActiveTab("video")}
-                                className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7137ff]"
+                                className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
                               >
                                 <VideoCameraIcon className="-ml-0.5 mr-2 h-4 w-4" />{" "}
                                 Generate Video
@@ -614,13 +614,13 @@ const PostForm = ({ post, onSave, onCancel, selectedDate }: PostFormProps) => {
                       <button
                         type="button"
                         onClick={onCancel}
-                        className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7137ff]"
+                        className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
                       >
                         Cancel
                       </button>
                       <button
                         type="submit"
-                        className="bg-[#7137ff] py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white hover:bg-[#7137ff]/80 cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7137ff]"
+                        className="bg-primary py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white hover:bg-primary-600 cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
                       >
                         Save
                       </button>

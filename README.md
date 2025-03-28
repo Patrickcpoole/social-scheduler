@@ -1,36 +1,79 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Social Media Post Scheduler
 
-## Getting Started
+A web application that helps create and schedule social media posts with "AI Generated Content". Built with Next.js, TypeScript, and TailwindCSS.
 
-First, run the development server:
+## Features
+
+- Create and schedule social media posts
+- View all scheduled posts in a calendar interface
+- Edit and delete scheduled posts
+
+### Installation
+
+1. Clone the repository:
+
+```bash
+git clone https://github.com/patrickcpoole/social-scheduler.git
+cd social-scheduler
+```
+
+2. Install dependencies:
+
+```bash
+npm install
+# or
+yarn install
+```
+
+4. Run the development server:
 
 ```bash
 npm run dev
 # or
 yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+5. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## AI Tools Used During Development
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **Cursor**: Assisted with:
+  - Initial architecture
+  - Small bug fixes
 
-## Learn More
+## Future Enhancements
 
-To learn more about Next.js, take a look at the following resources:
+1. **Platform Integration**
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+   - Direct posting to social media platforms via their APIs
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+2. **Advanced Scheduling**
 
-## Deploy on Vercel
+   - Best time to post recommendations
+   - Bulk scheduling
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+3. **Analytics**
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+   - Post performance tracking
+   - Engagement metrics
+   - Audience insights
+   - A/B testing capabilities
+
+4. **Collaboration Features**
+
+   - Team roles and permissions
+   - Approval workflows
+   - Content calendar sharing
+   - Comment and feedback system
+
+5. **Content Management**
+
+   - Media library
+   - Post templates
+   - Hashtag management
+   - Content categorization
+
+6. **AI-Powered Features**
+   - Automated hashtag recommendations
+   - Post optimization
+   - Sentiment analysis

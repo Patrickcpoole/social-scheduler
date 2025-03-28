@@ -122,7 +122,7 @@ const CalendarView = ({
           />
           <button
             onClick={() => onAddPost(new Date())}
-            className="flex items-center gap-2 px-4 py-2 bg-[#7137ff] text-white rounded-lg cursor-pointer transition-colors hover:bg-[#7137ff]/80"
+            className="flex items-center gap-2 px-4 py-2 bg-[#7137ff] text-white rounded-lg hover:bg-[#5a2bcc] transition-colors"
           >
             <PlusIcon className="h-5 w-5" />
             <span>Create Post</span>
@@ -194,14 +194,14 @@ const CalendarView = ({
                     </div>
                     {!hasEvents && (
                       <button
-                        className="hidden cursor-pointer group-hover:flex w-full bg-[#7137ff]/30 text-white text-xs 
-                        py-1 px-2 rounded  transition-colors min-h-[60px] items-center justify-center"
+                        className="hidden cursor-pointer group-hover:flex w-full bg-[#f5f2ff] text-[#7137ff] text-xs 
+                        py-1 px-2 rounded hover:bg-[#ebe6ff] transition-colors min-h-[60px] items-center justify-center"
                         onClick={(e) => {
                           e.stopPropagation();
                           onAddPost(date);
                         }}
                       >
-                        <PlusIcon className="h-5 w-5 text-[#7137ff]" />
+                        <PlusIcon className="h-5 w-5" />
                       </button>
                     )}
                   </div>
