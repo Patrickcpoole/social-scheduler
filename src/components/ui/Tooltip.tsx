@@ -9,7 +9,7 @@ type TooltipProps = {
 export const Tooltip = ({
   children,
   content,
-  position = "top",
+  position = "right",
 }: TooltipProps) => {
   const [isVisible, setIsVisible] = useState(false);
 

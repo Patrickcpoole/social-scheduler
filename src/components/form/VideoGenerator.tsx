@@ -155,7 +155,7 @@ const VideoGenerator = ({ onSelectVideo }: VideoGeneratorProps) => {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="Enter a title for your video"
-            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
+            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-[#7137ff] focus:border-[#7137ff] sm:text-sm"
             required
           />
         </div>
@@ -206,9 +206,9 @@ const VideoGenerator = ({ onSelectVideo }: VideoGeneratorProps) => {
                       />
                     </div>
                   ) : (
-                    <div className="w-16 h-16 bg-primary-100 flex items-center justify-center rounded mr-4">
+                    <div className="w-16 h-16 bg-[#7137ff]/10 flex items-center justify-center rounded mr-4">
                       <svg
-                        className="h-8 w-8 text-primary-500"
+                        className="h-8 w-8 text-[#7137ff]"
                         xmlns="http://www.w3.org/2000/svg"
                         fill="none"
                         viewBox="0 0 24 24"
@@ -318,8 +318,8 @@ const VideoGenerator = ({ onSelectVideo }: VideoGeneratorProps) => {
             disabled={isLoading || !title || !hasImages}
             className={`w-full inline-flex justify-center items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-base font-medium text-white ${
               isLoading || !title || !hasImages
-                ? "bg-primary-300 cursor-not-allowed"
-                : "bg-primary hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+                ? "bg-[#7137ff]/30 cursor-not-allowed"
+                : "bg-[#7137ff] hover:bg-[#7137ff]/80 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7137ff]"
             }`}
           >
             {isLoading ? (
@@ -369,7 +369,7 @@ const VideoGenerator = ({ onSelectVideo }: VideoGeneratorProps) => {
           <div className="mt-4 flex justify-end">
             <button
               onClick={() => onSelectVideo(generatedVideoUrl)}
-              className="text-sm text-primary-600 hover:text-primary-900 font-medium"
+              className="text-sm text-[#7137ff] hover:text-[#7137ff]/80 font-medium"
             >
               Use this video
             </button>

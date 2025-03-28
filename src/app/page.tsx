@@ -87,6 +87,10 @@ export default function Home() {
     setSelectedDate(null);
   };
 
+  const handleDeletePost = (post: PostType) => {
+    setPosts(posts.filter((p) => p.id !== post.id));
+  };
+
   const filteredPosts = posts.filter((post) => {
     if (selectedTab === "all") return true;
     return post.status === selectedTab;
@@ -109,6 +113,7 @@ export default function Home() {
             selectedDate={selectedDate || undefined}
             onSave={handleSavePost}
             onCancel={handleCancelForm}
+            onDelete={selectedPost ? handleDeletePost : undefined}
           />
         )}
       </main>

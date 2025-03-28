@@ -23,13 +23,21 @@ type PostFormProps = {
   post?: PostType;
   onSave: (post: PostType) => void;
   onCancel: () => void;
+  onDelete?: (post: PostType) => void;
   selectedDate?: Date;
 };
 
 type Tab = "basic" | "caption" | "image" | "video";
 
-const PostForm = ({ post, onSave, onCancel, selectedDate }: PostFormProps) => {
+const PostForm = ({
+  post,
+  onSave,
+  onCancel,
+  onDelete,
+  selectedDate,
+}: PostFormProps) => {
   const [activeTab, setActiveTab] = useState<Tab>("basic");
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const formatDateForInput = (date: Date) => {
     const year = date.getFullYear();
@@ -225,6 +233,13 @@ const PostForm = ({ post, onSave, onCancel, selectedDate }: PostFormProps) => {
     }
   };
 
+  const handleDelete = () => {
+    if (post && onDelete) {
+      onDelete(post);
+      onCancel();
+    }
+  };
+
   return (
     <Portal>
       <div className="fixed inset-0 z-50" onClick={onCancel}>
@@ -240,12 +255,35 @@ const PostForm = ({ post, onSave, onCancel, selectedDate }: PostFormProps) => {
               <h2 className="text-xl font-semibold text-gray-800">
                 {post ? "Edit Post" : "Create New Post"}
               </h2>
-              <button
-                onClick={onCancel}
-                className="text-gray-500 hover:text-gray-700 cursor-pointer"
-              >
-                <XMarkIcon className="h-6 w-6" />
-              </button>
+              <div className="flex items-center gap-4">
+                {post && onDelete && (
+                  <button
+                    onClick={() => setShowDeleteModal(true)}
+                    className="text-red-500 hover:text-red-700 cursor-pointer"
+                  >
+                    <svg
+                      className="h-6 w-6"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                      />
+                    </svg>
+                  </button>
+                )}
+                <button
+                  onClick={onCancel}
+                  className="text-gray-500 hover:text-gray-700 cursor-pointer"
+                >
+                  <XMarkIcon className="h-6 w-6" />
+                </button>
+              </div>
             </div>
 
             {/* Tabs */}
@@ -254,7 +292,7 @@ const PostForm = ({ post, onSave, onCancel, selectedDate }: PostFormProps) => {
                 onClick={() => setActiveTab("basic")}
                 className={`py-2 px-4 font-medium text-sm ${
                   activeTab === "basic"
-                    ? "border-b-2 border-primary-500 text-primary-600"
+                    ? "border-b-2 border-[#7137ff] text-[#7137ff] "
                     : "text-gray-500 hover:text-gray-700 cursor-pointer"
                 }`}
               >
@@ -264,7 +302,7 @@ const PostForm = ({ post, onSave, onCancel, selectedDate }: PostFormProps) => {
                 onClick={() => setActiveTab("caption")}
                 className={`py-2 px-4 font-medium text-sm ${
                   activeTab === "caption"
-                    ? "border-b-2 border-primary-500 text-primary-600"
+                    ? "border-b-2 border-[#7137ff] text-[#7137ff]  "
                     : "text-gray-500 hover:text-gray-700 cursor-pointer"
                 }`}
               >
@@ -274,7 +312,7 @@ const PostForm = ({ post, onSave, onCancel, selectedDate }: PostFormProps) => {
                 onClick={() => setActiveTab("image")}
                 className={`py-2 px-4 font-medium text-sm ${
                   activeTab === "image"
-                    ? "border-b-2 border-primary-500 text-primary-600"
+                    ? "border-b-2 border-[#7137ff] text-[#7137ff] "
                     : "text-gray-500 hover:text-gray-700 cursor-pointer"
                 }`}
               >
@@ -284,7 +322,7 @@ const PostForm = ({ post, onSave, onCancel, selectedDate }: PostFormProps) => {
                 onClick={() => setActiveTab("video")}
                 className={`py-2 px-4 font-medium text-sm ${
                   activeTab === "video"
-                    ? "border-b-2 border-primary-500 text-primary-600"
+                    ? "border-b-2 border-[#7137ff] text-[#7137ff] "
                     : "text-gray-500 hover:text-gray-700 cursor-pointer"
                 }`}
               >
@@ -317,7 +355,7 @@ const PostForm = ({ post, onSave, onCancel, selectedDate }: PostFormProps) => {
                               errors.frequency
                                 ? "border-red-500"
                                 : "border-gray-300"
-                            } rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm`}
+                            } rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-[#7137ff] focus:border-[#7137ff] sm:text-sm`}
                           >
                             <option value="once">Once</option>
                             <option value="daily">Daily</option>
@@ -348,7 +386,7 @@ const PostForm = ({ post, onSave, onCancel, selectedDate }: PostFormProps) => {
                                 errors.date
                                   ? "border-red-500"
                                   : "border-gray-300"
-                              } rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm ${
+                              } rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-[#7137ff] focus:border-[#7137ff] sm:text-sm ${
                                 isPastDate(watch("date")) ? "text-gray-500" : ""
                               }`}
                             />
@@ -381,7 +419,7 @@ const PostForm = ({ post, onSave, onCancel, selectedDate }: PostFormProps) => {
                                     errors.date
                                       ? "border-red-500"
                                       : "border-gray-300"
-                                  } rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm ${
+                                  } rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-[#7137ff] focus:border-[#7137ff] sm:text-sm ${
                                     isPastDate(watch("date"))
                                       ? "text-gray-500"
                                       : ""
@@ -414,7 +452,7 @@ const PostForm = ({ post, onSave, onCancel, selectedDate }: PostFormProps) => {
                                     errors.frequencyRange
                                       ? "border-red-500"
                                       : "border-gray-300"
-                                  } rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm`}
+                                  } rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-[#7137ff] focus:border-[#7137ff] sm:text-sm`}
                                 />
                                 {errors.frequencyRange && (
                                   <p className="mt-1 text-sm text-red-600">
@@ -445,7 +483,7 @@ const PostForm = ({ post, onSave, onCancel, selectedDate }: PostFormProps) => {
                           onChange={handleStatusChange}
                           className={`mt-1 block w-full border ${
                             errors.status ? "border-red-500" : "border-gray-300"
-                          } rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm`}
+                          } rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-[#7137ff] focus:border-[#7137ff] sm:text-sm`}
                         >
                           <option value="draft">Draft</option>
                           <option value="scheduled">Scheduled</option>
@@ -483,7 +521,7 @@ const PostForm = ({ post, onSave, onCancel, selectedDate }: PostFormProps) => {
                           errors.referenceTitle
                             ? "border-red-500"
                             : "border-gray-300"
-                        } rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm`}
+                        } rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-[#7137ff] focus:border-[#7137ff] sm:text-sm`}
                         placeholder="e.g., 'Monday Coffee Post' or 'Product Launch Announcement'"
                       />
                       {errors.referenceTitle && (
@@ -510,7 +548,7 @@ const PostForm = ({ post, onSave, onCancel, selectedDate }: PostFormProps) => {
                             onClick={() => setActiveTab("caption")}
                             className="ml-2 cursor-pointer"
                           >
-                            <PlayIcon className="h-5 w-5 stroke-primary-600 fill-transparent hover:fill-primary-600 transition-all duration-200" />
+                            <PlayIcon className="h-5 w-5 stroke-[#7137ff] fill-transparent hover:fill-[#7137ff] transition-all duration-200" />
                           </button>
                         </Tooltip>
                       </div>
@@ -527,7 +565,7 @@ const PostForm = ({ post, onSave, onCancel, selectedDate }: PostFormProps) => {
                             errors.caption
                               ? "border-red-500"
                               : "border-gray-300"
-                          } rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm`}
+                          } rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-[#7137ff] focus:border-[#7137ff] sm:text-sm`}
                           placeholder="Write your post caption..."
                         />
                       </div>
@@ -568,7 +606,7 @@ const PostForm = ({ post, onSave, onCancel, selectedDate }: PostFormProps) => {
                           <div className="space-y-1 text-center">
                             <PhotoIcon className="mx-auto h-12 w-12 text-gray-400" />
                             <div className="flex text-sm text-gray-600">
-                              <label className="relative cursor-pointer rounded-md font-medium text-primary-600 hover:text-primary-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-primary-500">
+                              <label className="relative cursor-pointer rounded-md font-medium text-[#7137ff] hover:text-[#7137ff] focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-[#7137ff]">
                                 <span>Upload a file</span>
                                 <input
                                   type="file"
@@ -588,7 +626,7 @@ const PostForm = ({ post, onSave, onCancel, selectedDate }: PostFormProps) => {
                               <button
                                 type="button"
                                 onClick={() => setActiveTab("image")}
-                                className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+                                className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7137ff] focus:border-[#7137ff]"
                               >
                                 <PlayIcon className="-ml-0.5 mr-2 h-4 w-4" />{" "}
                                 Generate Image
@@ -596,7 +634,7 @@ const PostForm = ({ post, onSave, onCancel, selectedDate }: PostFormProps) => {
                               <button
                                 type="button"
                                 onClick={() => setActiveTab("video")}
-                                className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+                                className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7137ff] focus:border-[#7137ff]"
                               >
                                 <VideoCameraIcon className="-ml-0.5 mr-2 h-4 w-4" />{" "}
                                 Generate Video
@@ -614,13 +652,13 @@ const PostForm = ({ post, onSave, onCancel, selectedDate }: PostFormProps) => {
                       <button
                         type="button"
                         onClick={onCancel}
-                        className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+                        className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7137ff] focus:border-[#7137ff]"
                       >
                         Cancel
                       </button>
                       <button
                         type="submit"
-                        className="bg-primary py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white hover:bg-primary-600 cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+                        className="bg-[#7137ff] py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white hover:bg-[#7137ff] cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7137ff]"
                       >
                         Save
                       </button>
@@ -656,6 +694,39 @@ const PostForm = ({ post, onSave, onCancel, selectedDate }: PostFormProps) => {
           </div>
         </div>
       </div>
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteModal && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center">
+          <div
+            className="absolute inset-0 bg-black/50"
+            onClick={() => setShowDeleteModal(false)}
+          />
+          <div className="relative bg-white rounded-lg p-6 max-w-md w-full mx-4">
+            <h3 className="text-lg font-medium text-gray-900 mb-4">
+              Delete Post
+            </h3>
+            <p className="text-sm text-gray-500 mb-6">
+              Are you sure you want to delete this post? This action cannot be
+              undone.
+            </p>
+            <div className="flex justify-end space-x-3">
+              <button
+                onClick={() => setShowDeleteModal(false)}
+                className="px-4 py-2 cursor-pointer text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7137ff]"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDelete}
+                className="px-4 py-2 text-sm  cursor-pointer font-medium text-white bg-red-600 border border-transparent rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </Portal>
   );
 };

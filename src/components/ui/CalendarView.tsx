@@ -122,7 +122,7 @@ const CalendarView = ({
           />
           <button
             onClick={() => onAddPost(new Date())}
-            className="flex items-center gap-2 px-4 py-2 bg-[#7137ff] text-white rounded-lg hover:bg-[#5a2bcc] transition-colors"
+            className="flex items-center cursor-pointer gap-2 px-4 py-2 bg-[#7137ff] text-white rounded-lg hover:bg-[#5a2bcc] transition-colors"
           >
             <PlusIcon className="h-5 w-5" />
             <span>Create Post</span>
