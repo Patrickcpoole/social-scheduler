@@ -132,7 +132,7 @@ const VideoGenerator = ({ onSelectVideo }: VideoGeneratorProps) => {
   const hasImages = mediaItems.some((item) => item.type === "image");
 
   return (
-    <div className="bg-white rounded-lg shadow-md overflow-hidden">
+    <div className="bg-white rounded-lg shadow-md overflow-hidden text-gray-700">
       <div className="p-6 border-b">
         <h2 className="text-xl font-semibold text-gray-800">Video Generator</h2>
         <p className="mt-2 text-sm text-gray-600">
